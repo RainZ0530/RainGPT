@@ -1,6 +1,5 @@
 import OpenAI from "openai";
 
-// Initialize OpenAI (v4+)
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -88,37 +87,35 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST allowed." });
   }
 
-  // Parse incoming messages from the client
-  const { messages } = req.body; // [{role:"user"|"assistant", content:"…"}, …]
+  const { messages } = req.body; 
 
-  // Prepend system prompt
   const chatMessages = [systemMessage, ...(messages || [])];
 
-  // Tell Next.js to treat this as a text/event-stream
+
   res.writeHead(200, {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache, no-transform",
     Connection: "keep-alive",
   });
 
-  // Call OpenAI with streaming enabled
+ 
   const response = await openai.chat.completions.create({
     model: "gpt-3.5-turbo",
     messages: chatMessages,
     stream: true,
   });
 
-  // Iterate over the stream and push each token to the client
+
   for await (const part of response) {
-    // part.choices[0].delta.content contains the next token (or undefined)
+    
     const token = part.choices?.[0]?.delta?.content;
     if (token) {
-      // Server-sent event format: “data: <token>\n\n”
+      
       res.write(`data: ${JSON.stringify(token)}\n\n`);
     }
   }
 
-  // When done, send a final “[DONE]” event
+
   res.write("data: [DONE]\n\n");
   res.end();
 }

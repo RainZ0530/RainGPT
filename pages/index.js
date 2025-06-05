@@ -19,7 +19,7 @@ export default function Home() {
       "In the meantime, please feel free to ask me about anything, and I will try my best to answer!",
   };
 
-  // messages: each object is { sender: "user"|"bot", text: string, streaming?: boolean }
+  
   const [messages, setMessages] = useState([
     {
       sender: "bot",
@@ -31,7 +31,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const chatLogRef = useRef();
 
-  // Scroll to bottom whenever messages change
+  
   useEffect(() => {
     if (chatLogRef.current) {
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
@@ -41,15 +41,15 @@ export default function Home() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    // 1) Append the user's message
+   
     const userMsg = { sender: "user", text: input.trim(), streaming: false };
     setMessages((prev) => [...prev, userMsg]);
 
-    // 2) Add a placeholder for the bot’s streaming reply
+    
     const placeholder = { sender: "bot", text: "", streaming: true };
     setMessages((prev) => [...prev, placeholder]);
 
-    // Build the history to send to API
+    
     const apiMessages = messages.map((m) => ({
       role: m.sender === "user" ? "user" : "assistant",
       content: m.text,
@@ -57,7 +57,7 @@ export default function Home() {
     apiMessages.push({ role: "user", content: input.trim() });
 
     try {
-      // 3) Call the streaming endpoint
+      
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -66,7 +66,7 @@ export default function Home() {
 
       if (!response.ok) {
         console.error("Streaming error:", await response.text());
-        // Mark placeholder as done to stop any loading indicator
+        
         setMessages((prev) =>
           prev.map((m, idx) =>
             idx === prev.length - 1 ? { ...m, streaming: false } : m
@@ -75,13 +75,13 @@ export default function Home() {
         return;
       }
 
-      // 4) Read the response stream
+      
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let done = false;
       let buffer = "";
 
-      // Capture the index of the placeholder we just added
+      
       let placeholderIndex;
       setMessages((prev) => {
         placeholderIndex = prev.length - 1;
@@ -94,14 +94,14 @@ export default function Home() {
         if (value) {
           buffer += decoder.decode(value, { stream: true });
           const parts = buffer.split("\n\n");
-          buffer = parts.pop(); // last chunk may be incomplete
+          buffer = parts.pop(); 
 
           for (const part of parts) {
-            // Each part looks like "data: \"<token>\"" or "data: [DONE]"
+            
             if (!part.startsWith("data: ")) continue;
             const raw = part.replace(/^data: /, "").trim();
             if (raw === "[DONE]") {
-              // Mark streaming as finished
+              
               setMessages((prev) =>
                 prev.map((m, idx) =>
                   idx === placeholderIndex ? { ...m, streaming: false } : m
@@ -110,14 +110,14 @@ export default function Home() {
               reader.cancel();
               break;
             }
-            // Parse the JSON‐escaped token string
+            
             let token;
             try {
               token = JSON.parse(raw);
             } catch {
               continue;
             }
-            // Append the token to the placeholder’s text
+            
             setMessages((prev) =>
               prev.map((m, idx) =>
                 idx === placeholderIndex
@@ -130,7 +130,7 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Fetch error:", err);
-      // If an error occurs, stop the streaming placeholder
+      
       setMessages((prev) =>
         prev.map((m) =>
           m.streaming ? { ...m, streaming: false } : m
@@ -241,7 +241,7 @@ const chatStyles = {
     display: "flex",
     flexDirection: "column",
   },
-  // Bot bubble: lavender gradient + purple border + subtle shadow
+  
   botBubble: {
     maxWidth: "100%",
     marginBottom: "1rem",
@@ -255,7 +255,7 @@ const chatStyles = {
     whiteSpace: "pre-wrap",
     color: "#000",
   },
-  // User bubble: sky-blue gradient + deeper blue border + subtle shadow
+  
   userBubble: {
     maxWidth: "100%",
     marginBottom: "1rem",
