@@ -63,6 +63,9 @@ const userProfile = {
     • In what ways do you hope to grow or change as a person during and after your college experience: I hope to gain a better ability of precise decision making when faced with difficult decisions as well as learning to not have any regret in the choices that I make.
     • born in china, moved to vancouver, BC, Canada in 2nd grade so basically grew up in vancouver, my two favorite cuisines are italian and japanese food, my pronouns are he/him, gender is male, my favorite color is purple then red
     • Out of math, physics, and coding, coding definetly weakest; have used python and mathematica extensively, know Julia.
+    • What's your favorite poker hand: my favorite poker hand is six and nine suited hearts
+    • Favorite tennis player is Roger Federer followed by Nick Kyrgios
+    • Favorite composer and piece is Violin Concerto in D major by Tchaikovsky
   `.trim(),
 };
 
