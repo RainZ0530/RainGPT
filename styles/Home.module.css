@@ -166,3 +166,12 @@ a.secondary {
     filter: invert();
   }
 }
+
+/* Home.module.css */
+.wrapper {
+  display: flex;
+  justify-content: center;  /* horizontal centering */
+  align-items: center;      /* vertical centering */
+  min-height: 100vh;        /* fill entire viewport height */
+  background-color: #f0f0f0;/* optional: light gray page background */
+}
